@@ -42,9 +42,9 @@ class YogaSession < ApplicationRecord
   end
 
   def start_end_on_same_day
-    return if start_date == end_date
+    return if start_date.to_date == end_date.to_date
 
-    errors.add(:start_date, 'must be the same as end date')
+    errors.add(:end_date, 'must be the same day as start date')
   end
 
   def start_is_before_end_date
@@ -73,4 +73,19 @@ class YogaSession < ApplicationRecord
 
     errors.add(:teacher, 'is not available')
   end
+
+  def to_stripe_format
+    {
+      price_data: {
+        currency: 'eur',
+        product_data: {
+          name: course.name,
+        },
+        unit_amount: price.to_i * 100,
+      },
+      quantity: 1,
+    }
+  end
+
+
 end
